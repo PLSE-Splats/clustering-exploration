@@ -1,0 +1,3 @@
+# Image size.
+IMAGE_WIDTH = 1264
+IMAGE_HEIGHT = 832
