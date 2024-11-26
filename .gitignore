@@ -363,3 +363,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,macos,windows,linux,python
 
 src/clustering_exploration/data/
+resources/
