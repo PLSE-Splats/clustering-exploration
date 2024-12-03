@@ -1,0 +1,27 @@
+{
+    "model_path": "/content/drive/MyDrive/3dgs/data/pre-trained/3DGS",
+    "colmap_path": "/content/drive/MyDrive/3dgs/data/tandt",
+    "gaussian_splatting_path": "/content/drive/MyDrive/3dgs/gaussian-splatting",
+    "dataset_path": "/content/drive/MyDrive/3dgs/data/datasets",
+    "dataset_targets": [
+        "train",
+        "truck",
+        "drjohnson",
+        "playroom"
+    ],
+    "views": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        70,
+        100,
+        150
+    ],
+    "algo_name": "cluster_splats",
+    "parameters": {
+        "epsilon": 0.11
+    }
+}
