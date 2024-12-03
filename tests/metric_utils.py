@@ -1,7 +1,8 @@
+import argparse
+
 import cv2
 import numpy as np
 from skimage.metrics import structural_similarity as ssim
-import argparse
 
 
 def compare_images(image1_path, image2_path):
