@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import re
+import shutil
 
 
 def load_config(config_path):
@@ -46,7 +47,26 @@ def generate_dataset(config):
             target_colmap_path = os.path.join(colmap_path, target)
             target_dataset_path = os.path.join(dataset_path, target + "_" + str(view))
 
-            render_view_cmd = f"python render_single_view --view_index {view} -m {target_model_path} -s {target_colmap_path} --skip_test"
+            # if dataset path not exists, create it
+            os.makedirs(target_dataset_path, exist_ok=True)
+            if os.path.exists(
+                os.path.join(target_dataset_path, "collected_splats.csv")
+            ):
+                print(f"view:{view} Dataset already exists, skipping...")
+                continue
+            render_file_path = os.path.join(gs_path, "render_single_view.py")
+            render_view_cmd = [
+                "python3",
+                render_file_path,
+                "--view_index",
+                str(view),
+                "-m",
+                target_model_path,
+                "-s",
+                target_colmap_path,
+                "--skip_test",
+            ]
+
             result = subprocess.run(
                 render_view_cmd,
                 capture_output=True,
@@ -55,25 +75,30 @@ def generate_dataset(config):
             print("STDOUT:", result.stdout)
             print("STDERR:", result.stderr)
 
+            # if there is error exit
+            if result.returncode != 0:
+                raise RuntimeError(f"Error during rendering view {view}")
+
             # Save the csv, gt, render image to the dataset path
             os.makedirs(target_dataset_path, exist_ok=True)
 
             # mv the csv file to the dataset path
-            csv_file = os.path.join(gs_path, "alpha_vals.csv")
-            os.rename(csv_file, os.path.join(target_dataset_path, "csv"))
+            csv_file = os.path.join(gs_path, "collected_splats.csv")
+            shutil.copy(
+                csv_file, os.path.join(target_dataset_path, "collected_splats.csv")
+            )
 
             # mv the gt file to the dataset path
-
             gt_img = os.path.join(
-                model_path, "train", "ours_30000", "gt", f"{view:05d}.png"
+                target_model_path, "train", "ours_30000", "gt", f"{view:05d}.png"
             )
 
             render_img = os.path.join(
-                model_path, "train", "ours_30000", "renders", f"{view:05d}.png"
+                target_model_path, "train", "ours_30000", "renders", f"{view:05d}.png"
             )
 
-            os.rename(gt_img, os.path.join(target_dataset_path, "gt.png"))
-            os.rename(render_img, os.path.join(target_dataset_path, "render.png"))
+            shutil.copy(gt_img, os.path.join(target_dataset_path, "gt.png"))
+            shutil.copy(render_img, os.path.join(target_dataset_path, "render.png"))
 
     # Add dataset generation logic here
 
@@ -82,7 +107,7 @@ def generate_dataset(config):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate dataset for 3DGS.")
-    parser.add_argument("config", type=str, help="Path to the test_config.")
+    parser.add_argument("--config", type=str, help="Path to the test_config.")
 
     args = parser.parse_args()
 
