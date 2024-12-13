@@ -45,7 +45,7 @@ Source = "https://github.com/Kenneth Yang/clustering-exploration"
 path = "src/clustering_exploration/__about__.py"
 
 [tool.hatch.envs.default]
-python = "3.13"
+python = "3.13.1"
 
 [tool.hatch.envs.types]
 extra-dependencies = [
