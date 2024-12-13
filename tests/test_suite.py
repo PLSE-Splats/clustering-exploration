@@ -75,19 +75,11 @@ def process_dataset(item_path, cluster_func, parameters):
     clustered_rgb = cluster_func(**parameters)
     computed_image = ca.compute_image_from_clusters(clustered_rgb)
 
-    plt.figure(
-        figsize=(width / 100, height / 100), dpi=100
-    )  # Adjust the figure size to match the resolution
-    plt.axis("off")  # Hide axes for better visualization
-    plt.imshow(np.array(computed_image).reshape((height, width, 3)))
-    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Remove padding
-    plt.savefig(
-        os.path.join(item_path, "computed_image.png"),
-        dpi=100,
-        bbox_inches="tight",
-        pad_inches=0,
-    )
-    plt.close()
+    output_image = (
+        np.array(computed_image).reshape((height, width, 3)).astype(np.uint8)
+    )  # Ensure uint8 format
+    output_image_path = os.path.join(item_path, "computed_image.png")
+    Image.fromarray(output_image).save(output_image_path)
 
     # Create Json file save psnr and ssim with gt
     psnr_ssim_res = mu.compare_images(
