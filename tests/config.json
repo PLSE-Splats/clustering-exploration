@@ -1,7 +1,7 @@
 {
-    "model_path": "/content/drive/MyDrive/3dgs/data/pre-trained/3DGS",
+    "model_path": "/content/drive/MyDrive/3dgs/data/models",
     "colmap_path": "/content/drive/MyDrive/3dgs/data/tandt",
-    "gaussian_splatting_path": "/content/drive/MyDrive/3dgs/gaussian-splatting",
+    "gaussian_splatting_path": "/content/gaussian-splatting",
     "dataset_path": "/content/drive/MyDrive/3dgs/data/datasets",
     "dataset_targets": [
         "train",

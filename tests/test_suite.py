@@ -1,7 +1,7 @@
 import argparse
 import json
 import os
-import Image
+from PIL import Image
 import numpy as np
 import polars as pl
 import cluster_algo as ca
@@ -40,7 +40,9 @@ def evaluate_algo(config):
     for item in os.listdir(dataset_path):
         item_path = os.path.join(dataset_path, item)
         if os.path.isdir(item_path):
+            print(f"processing {item_path}")
             process_dataset(item_path, cluster_func, parameters)
+            print(f"finish processing {item_path}")
 
 
 def read_csv(dataset_path):
@@ -48,7 +50,7 @@ def read_csv(dataset_path):
     column_names = df_temp.columns
 
     schema_overrides = {name: pl.Float32 for name in column_names if name != "pixelNum"}
-    schema_overrides["pixelNum"] = pl.Int64  # Set 'pixelNum' as Int64
+    schema_overrides["sample_index"] = pl.Int64  # Set 'pixelNum' as Int64
 
     # Load the CSV with the specified schema overrides
     df = pl.read_csv(dataset_path, schema_overrides=schema_overrides)
@@ -57,7 +59,7 @@ def read_csv(dataset_path):
 
 def process_dataset(item_path, cluster_func, parameters):
     gt_img = os.path.join(item_path, "gt.png")
-    dataset = os.path.join(item_path, "alpha_vals.csv")
+    dataset = os.path.join(item_path, "collected_splats.csv")
     df = read_csv(dataset)
 
     image = Image.open(gt_img)
@@ -72,26 +74,27 @@ def process_dataset(item_path, cluster_func, parameters):
 
     clustered_rgb = cluster_func(**parameters)
     computed_image = ca.compute_image_from_clusters(clustered_rgb)
-    plt.figure(figsize=(10, 8))
-    plt.axis("off")  # Hide axes for better visualization
 
-    # Save the image
-    plt.imshow(np.array(computed_image).reshape((height, width, 3)))
-    plt.savefig("computed_image.png")
+    output_image = (
+        np.array(computed_image).reshape((height, width, 3)).astype(np.uint8)
+    )  # Ensure uint8 format
+    output_image_path = os.path.join(item_path, "computed_image.png")
+    Image.fromarray(output_image).save(output_image_path)
 
     # Create Json file save psnr and ssim with gt
-    psnr = mu.compute_psnr(gt_img, "computed_image.png")
-    ssim = mu.compute_ssim(gt_img, "computed_image.png")
+    psnr_ssim_res = mu.compare_images(
+        gt_img, os.path.join(item_path, "computed_image.png")
+    )
 
-    with open("results.json", "w") as f:
-        json.dump({"psnr": psnr, "ssim": ssim}, f)
+    with open(os.path.join(item_path, "results.json"), "w") as f:
+        json.dump(psnr_ssim_res, f)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Evalute algorithm using from dataset for 3DGS."
     )
-    parser.add_argument("config", type=str, help="Path to the test_config.")
+    parser.add_argument("--config", type=str, help="Path to the test_config.")
 
     args = parser.parse_args()
 
