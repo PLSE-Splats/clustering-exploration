@@ -1,9 +1,10 @@
 from os import makedirs
 from os.path import dirname, exists, join
 
-from constants import CACHE_DIR, DATA_DIR, IMAGE_HEIGHT, IMAGE_WIDTH
 from numpy import load, ndarray, save
 from polars import Float32, Schema, UInt8, UInt32, all, scan_csv
+
+from clustering_exploration.utils.constants import CACHE_DIR, DATA_DIR, IMAGE_HEIGHT, IMAGE_WIDTH
 
 
 def define_schema() -> Schema:

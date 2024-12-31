@@ -1,12 +1,12 @@
 import argparse
 import json
 import os
-from PIL import Image
+
+import cluster_algo as ca
+import metric_utils as mu
 import numpy as np
 import polars as pl
-import cluster_algo as ca
-import matplotlib.pyplot as plt
-import metric_utils as mu
+from PIL import Image
 
 
 def load_config(config_path):
@@ -19,7 +19,7 @@ def load_config(config_path):
     Returns:
         dict: A dictionary containing the configuration settings.
     """
-    with open(config_path, "r") as file:
+    with open(config_path) as file:
         config = json.load(file)
     return config
 

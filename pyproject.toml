@@ -74,4 +74,4 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-exclude = ["src/jiexiao"]
+exclude = ["src/jiexiao", "tests"]
