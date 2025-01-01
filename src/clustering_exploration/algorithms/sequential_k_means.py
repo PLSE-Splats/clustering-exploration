@@ -7,7 +7,7 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
     """Offline K-Means clustering algorithm."""
 
     # Cluster field indices.
-    MEAN = 0
+    DEPTH = 0
     SPLAT_COUNT = 1
     ALPHA_SUM = 2
     TRANSMITTANCE = 3
@@ -32,7 +32,7 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
 
             # Compute cluster index.
             target_cluster_index = (
-                argmin(abs(clusters[:, self.MEAN] - depth))
+                argmin(abs(clusters[:, self.DEPTH] - depth))
                 if self.initial_guesses_found
                 else self._initial_guess_index(clusters, depth)
             )
@@ -44,8 +44,8 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
             clusters[target_cluster_index, self.PREMULTIPLIED_COLOR :] += alpha * array(color)
 
             # Update cluster mean.
-            current_mean = clusters[target_cluster_index, self.MEAN]
-            clusters[target_cluster_index, self.MEAN] = (
+            current_mean = clusters[target_cluster_index, self.DEPTH]
+            clusters[target_cluster_index, self.DEPTH] = (
                 current_mean + (depth - current_mean) / clusters[target_cluster_index, self.SPLAT_COUNT]
             )
 
@@ -54,7 +54,7 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
         clusters[:, self.PREMULTIPLIED_COLOR :] /= clusters[:, self.ALPHA_SUM, None]
 
         # Sort clusters and return.
-        return clusters[argsort(clusters[:, self.MEAN])][:, self.TRANSMITTANCE :]
+        return clusters[argsort(clusters[:, self.DEPTH])][:, self.TRANSMITTANCE :]
 
     def _initial_guess_index(self, clusters, depth) -> int:
         """Compute the initial guess index for the given depth.
@@ -77,7 +77,7 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
                 self.initial_guesses_found = True
 
             # Use the cluster if it's exactly the same depth or if it's the next empty one.
-            if cluster[self.MEAN] == depth or not cluster[self.MEAN]:
+            if cluster[self.DEPTH] == depth or not cluster[self.DEPTH]:
                 return cluster_index
 
         # Should never reach here.
