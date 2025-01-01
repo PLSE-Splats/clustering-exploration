@@ -51,7 +51,7 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
 
         # Compute final transmittance and color.
         clusters[:, self.TRANSMITTANCE] = 1 - clusters[:, self.TRANSMITTANCE]
-        clusters[:, self.PREMULTIPLIED_COLOR :] /= clusters[:, self.ALPHA_SUM].reshape(-1, 1)
+        clusters[:, self.PREMULTIPLIED_COLOR :] /= clusters[:, self.ALPHA_SUM, None]
 
         # Sort clusters and return.
         return clusters[argsort(clusters[:, self.MEAN])][:, self.TRANSMITTANCE :]
