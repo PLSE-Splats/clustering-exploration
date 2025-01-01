@@ -2,11 +2,6 @@
 
 -----
 
-## Table of Contents
-
-- [Installation](#installation)
-- [License](#license)
-
 ## Installation
 
 - [Install Hatch](https://hatch.pypa.io/latest/install/) (this is a python environment manager)
