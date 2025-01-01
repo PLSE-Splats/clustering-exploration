@@ -1,9 +1,8 @@
 import argparse
 import json
 import os
-import subprocess
-import re
 import shutil
+import subprocess
 
 
 def load_config(config_path):
@@ -16,7 +15,7 @@ def load_config(config_path):
     Returns:
         dict: A dictionary containing the configuration settings.
     """
-    with open(config_path, "r") as file:
+    with open(config_path) as file:
         config = json.load(file)
     return config
 
@@ -70,7 +69,7 @@ def generate_dataset(config):
             result = subprocess.run(
                 render_view_cmd,
                 capture_output=True,
-                text=True,  # Ensures output is in string format, not bytes
+                text=True, check=False,  # Ensures output is in string format, not bytes
             )
             print("STDOUT:", result.stdout)
             print("STDERR:", result.stderr)

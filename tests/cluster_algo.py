@@ -1,5 +1,6 @@
-import numpy as np
 import random
+
+import numpy as np
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
