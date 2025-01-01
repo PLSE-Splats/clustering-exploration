@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from joblib import Parallel, delayed
-from numpy import ndarray
+from numpy import array, empty, ndarray, prod, sum, zeros
 from numpy.random import default_rng
 from tqdm.auto import tqdm
 
@@ -29,6 +29,34 @@ class AlgorithmBase(ABC):
         Returns:
             Clustered splats for the pixel. Shape: [ number of clusters x [ A, R, G, B ] ].
         """
+
+    @staticmethod
+    def _commutative_combine(splat_clusters: list) -> ndarray:
+        """Commutatively combine clustered splats into a single splat.
+
+        Args:
+            splat_clusters: List of clustered splats. Shape: [ number of clusters x [ number of splats x [ A, R, G, B ] ] ].
+        """
+        pixel_output = empty((len(splat_clusters), 4))
+        for index, cluster_list in enumerate(splat_clusters):
+            # Skip empty clusters.
+            if not cluster_list:
+                pixel_output[index] = zeros(4)
+                continue
+
+            # Convert to numpy array.
+            cluster = array(cluster_list)
+
+            # Compute the output alpha and color.
+            pixel_output[index, 0] = 1 - prod(1 - cluster[:, 0])
+            alpha_sum = sum(cluster[:, 0])
+            if alpha_sum:
+                pixel_output[index, 1:] = sum(cluster[:, 0].reshape(-1, 1) * cluster[:, 1:], axis=0) / alpha_sum
+            else:
+                pixel_output[index, 1:] = zeros(3)
+
+        # Return the clustered pixel.
+        return pixel_output
 
     def compute(self) -> list:
         """Compute clustering for all pixels.

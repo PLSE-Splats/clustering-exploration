@@ -1,4 +1,4 @@
-from numpy import array, concatenate, empty, ndarray, prod, sum, zeros
+from numpy import array, concatenate, ndarray
 
 from clustering_exploration.algorithms.algorithm_base import AlgorithmBase
 
@@ -47,15 +47,4 @@ class EpsilonAlgorithm(AlgorithmBase):
         pixel_clustering = dict(sorted(pixel_clustering.items()))
 
         # Commutative combination of the splats in each cluster (alpha, color).
-        pixel_output = empty((len(pixel_clustering), 4))
-        for index, cluster_list in enumerate(pixel_clustering.values()):
-            cluster = array(cluster_list)
-            pixel_output[index, 0] = 1 - prod(1 - cluster[:, 0])
-            alpha_sum = sum(cluster[:, 0])
-            if alpha_sum:
-                pixel_output[index, 1:] = sum(cluster[:, 0].reshape(-1, 1) * cluster[:, 1:], axis=0) / alpha_sum
-            else:
-                pixel_output[index, 1:] = zeros(3)
-
-        # Return the clustered pixel.
-        return pixel_output
+        return self._commutative_combine(list(pixel_clustering.values()))
