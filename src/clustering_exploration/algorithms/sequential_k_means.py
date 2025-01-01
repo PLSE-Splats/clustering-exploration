@@ -1,4 +1,4 @@
-from numpy import argmin, argsort, array, ndarray, zeros
+from numpy import abs, argmin, argsort, array, ndarray, zeros
 
 from clustering_exploration.algorithms.algorithm_base import AlgorithmBase
 
@@ -81,4 +81,5 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
                 return cluster_index
 
         # Should never reach here.
-        raise ValueError("No cluster found for initial guess.")
+        msg = "No cluster found for initial guess."
+        raise ValueError(msg)
