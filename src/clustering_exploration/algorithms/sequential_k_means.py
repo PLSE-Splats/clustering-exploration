@@ -2,16 +2,16 @@ from numpy import abs, argmin, argsort, array, ndarray, zeros
 
 from clustering_exploration.algorithms.algorithm_base import AlgorithmBase
 
+# Cluster field indices.
+DEPTH = 0
+SPLAT_COUNT = 1
+ALPHA_SUM = 2
+TRANSMITTANCE = 3
+PREMULTIPLIED_COLOR = 4
 
 class SequentialKMeansAlgorithm(AlgorithmBase):
     """Offline K-Means clustering algorithm."""
 
-    # Cluster field indices.
-    DEPTH = 0
-    SPLAT_COUNT = 1
-    ALPHA_SUM = 2
-    TRANSMITTANCE = 3
-    PREMULTIPLIED_COLOR = 4
 
     def __init__(self, splats: ndarray, number_of_clusters: int):
         super().__init__(splats, number_of_clusters)
@@ -23,7 +23,7 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
         # For each pixel, [ K x [ mean, number, alpha_sum, transmittance, premultiplied_r, premultiplied_g, premultiplied_b ] ]
         # After clustering, (1 - transmittance) gives final cluster alpha, and (pre_multiplied_color / alpha_sum) gives final cluster color
         clusters = zeros((self.number_of_clusters, 7))
-        clusters[:, self.TRANSMITTANCE] = 1
+        clusters[:,TRANSMITTANCE] = 1
 
         for alpha, depth, *color in splats:
             # Skip zero alpha or depth.
@@ -32,29 +32,29 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
 
             # Compute cluster index.
             target_cluster_index = (
-                argmin(abs(clusters[:, self.DEPTH] - depth))
+                argmin(abs(clusters[:,DEPTH] - depth))
                 if self.initial_guesses_found
                 else self._initial_guess_index(clusters, depth)
             )
 
             # Update cluster information.
-            clusters[target_cluster_index, self.SPLAT_COUNT] += 1
-            clusters[target_cluster_index, self.ALPHA_SUM] += alpha
-            clusters[target_cluster_index, self.TRANSMITTANCE] *= 1 - alpha
-            clusters[target_cluster_index, self.PREMULTIPLIED_COLOR :] += alpha * array(color)
+            clusters[target_cluster_index,SPLAT_COUNT] += 1
+            clusters[target_cluster_index,ALPHA_SUM] += alpha
+            clusters[target_cluster_index,TRANSMITTANCE] *= 1 - alpha
+            clusters[target_cluster_index,PREMULTIPLIED_COLOR :] += alpha * array(color)
 
             # Update cluster mean.
-            current_mean = clusters[target_cluster_index, self.DEPTH]
-            clusters[target_cluster_index, self.DEPTH] = (
-                current_mean + (depth - current_mean) / clusters[target_cluster_index, self.SPLAT_COUNT]
+            current_mean = clusters[target_cluster_index,DEPTH]
+            clusters[target_cluster_index,DEPTH] = (
+                current_mean + (depth - current_mean) / clusters[target_cluster_index,SPLAT_COUNT]
             )
 
         # Compute final transmittance and color.
-        clusters[:, self.TRANSMITTANCE] = 1 - clusters[:, self.TRANSMITTANCE]
-        clusters[:, self.PREMULTIPLIED_COLOR :] /= clusters[:, self.ALPHA_SUM, None]
+        clusters[:,TRANSMITTANCE] = 1 - clusters[:,TRANSMITTANCE]
+        clusters[:,PREMULTIPLIED_COLOR :] /= clusters[:,ALPHA_SUM, None]
 
         # Sort clusters and return.
-        return clusters[argsort(clusters[:, self.DEPTH])][:, self.TRANSMITTANCE :]
+        return clusters[argsort(clusters[:,DEPTH])][:,TRANSMITTANCE :]
 
     def _initial_guess_index(self, clusters, depth) -> int:
         """Compute the initial guess index for the given depth.
