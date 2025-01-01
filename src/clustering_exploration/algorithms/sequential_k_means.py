@@ -65,6 +65,9 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
             clusters: The current clusters.
             depth: The depth to use as a guess.
 
+        Raises:
+            ValueError: If no cluster is found for the initial guess.
+
         Returns:
             The index of the cluster to use this depth as an initial guess.
         """
@@ -73,10 +76,9 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
             if cluster_index == self.number_of_clusters - 1:
                 self.initial_guesses_found = True
 
-            # Use the cluster if it's exactly the same or if it's the next empty one.
+            # Use the cluster if it's exactly the same depth or if it's the next empty one.
             if cluster[self.MEAN] == depth or not cluster[self.MEAN]:
                 return cluster_index
 
         # Should never reach here.
-        self.initial_guesses_found = True
-        return 0
+        raise ValueError("No cluster found for initial guess.")
