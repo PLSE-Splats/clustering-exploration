@@ -75,4 +75,4 @@ class AlgorithmBase(ABC):
         Returns:
             Clustered splats for all pixels. Shape: [ H x W x [ number of clusters x [ A, R, G, B ] ] ].
         """
-        return Parallel(n_jobs=-1)(delayed(self.pixel_cluster)(splats) for splats in tqdm(self.splats))
+        return Parallel(n_jobs=-1)(delayed(self.pixel_cluster)(pixel_splat) for pixel_splat in tqdm(self.splats))
