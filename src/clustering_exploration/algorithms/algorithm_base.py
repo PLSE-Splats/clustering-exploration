@@ -60,7 +60,7 @@ class AlgorithmBase(ABC):
 
     def shuffle_and_compute(self) -> list:
         """Shuffle splats and compute clustering for all pixels.
-        
+
         Returns:
             Clustered splats for all pixels. Shape: [ H x W x [ number of clusters x [ A, R, G, B ] ] ]
         """
