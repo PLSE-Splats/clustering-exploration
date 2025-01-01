@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from os import makedirs
 from os.path import dirname, join
 
@@ -38,7 +40,7 @@ def save_array_to_image(pixel_array: ndarray, name: str) -> Image:
     return image
 
 
-def alpha_compose_splats(splats: ndarray[float]) -> ndarray[float]:
+def alpha_compose_splats(splats: list[float]) -> ndarray[float]:
     """Alpha compose an ordered array of splats.
 
     Splats are provided in an ordered array of the form [ K x [ A, R, G, B ] ].
@@ -73,7 +75,7 @@ def alpha_compose_splats(splats: ndarray[float]) -> ndarray[float]:
     return final_color
 
 
-def compute_image_from_clusters(clustered_splats: ndarray, output_image_name: str) -> Image:
+def compute_image_from_clusters(clustered_splats: list, output_image_name: str) -> Image:
     """Compute the image from the clustered splats and save the result.
 
     Args:

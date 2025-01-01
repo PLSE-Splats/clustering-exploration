@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from joblib import Parallel, delayed
-from numpy import array, ndarray
+from numpy import ndarray
 from numpy.random import default_rng
 from tqdm.auto import tqdm
 
@@ -30,7 +30,7 @@ class AlgorithmBase(ABC):
             Clustered splats for the pixel. Shape: [ number of clusters x [ A, R, G, B ] ].
         """
 
-    def compute(self) -> ndarray:
+    def compute(self) -> list:
         """Compute clustering for all pixels.
 
         Will shuffle the splats in each pixel before clustering.
@@ -40,6 +40,6 @@ class AlgorithmBase(ABC):
         """
         print("Shuffling splats...")
         default_rng().shuffle(self.splats, axis=1)
-        
+
         print("Clustering splats...")
-        return array(Parallel(n_jobs=-1)(delayed(self.pixel_cluster)(splats) for splats in tqdm(self.splats)))
+        return Parallel(n_jobs=-1)(delayed(self.pixel_cluster)(splats) for splats in tqdm(self.splats))
