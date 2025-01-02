@@ -70,31 +70,3 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
 
         # Sort clusters and return.
         return clusters[argsort(clusters[:, DEPTH])][:, TRANSMITTANCE:]
-
-    def _initial_guess_index(self, clusters, depth) -> int:
-        """Compute the initial guess index for the given depth.
-
-        Assumes an initial guess is needed and possible. Will update the all guesses found flag if reached the end of the clusters.
-
-        Args:
-            clusters: The current clusters.
-            depth: The depth to use as a guess.
-
-        Raises:
-            ValueError: If no cluster is found for the initial guess.
-
-        Returns:
-            The index of the cluster to use this depth as an initial guess.
-        """
-        for cluster_index, cluster in enumerate(clusters):
-            # If we made it to the last index, then we will make all initial guesses.
-            if cluster_index == self.number_of_clusters - 1:
-                self.initial_guesses_found = True
-
-            # Use the cluster if it's exactly the same depth or if it's the next empty one.
-            if cluster[self.DEPTH] == depth or not cluster[self.DEPTH]:
-                return cluster_index
-
-        # Should never reach here.
-        msg = "No cluster found for initial guess."
-        raise ValueError(msg)
