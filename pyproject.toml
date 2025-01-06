@@ -26,10 +26,10 @@ classifiers = [
 ]
 dependencies = [
     "notebook==7.3.2",
-    "polars==1.18.0",
+    "polars==1.19.0",
     "matplotlib==3.10.0",
     "numpy==2.2.1",
-    "pillow==11.0.0",
+    "pillow==11.1.0",
     "tqdm==4.67.1",
     "ipywidgets==8.1.5",
     "joblib==1.4.2",
