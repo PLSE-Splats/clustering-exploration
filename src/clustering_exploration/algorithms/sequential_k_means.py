@@ -39,19 +39,24 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
             if not initial_guesses_found:
                 # Loop through each non-zero cluster and check for an exact match.
                 for cluster_index, cluster in enumerate(clusters):
-                    # If we made it to the last index, then we will make all initial guesses.
-                    if cluster_index == self.number_of_clusters - 1:
-                        initial_guesses_found = True
-
-                    # Use next empty cluster (there should never be a cluster with 0 depth).
-                    if not cluster[DEPTH]:
-                        target_cluster_index = cluster_index
-                        break
-                        
                     # Use the cluster if it's exactly the same.
                     if cluster[DEPTH] == depth:
                         target_cluster_index = cluster_index
                         break
+                    
+                    # Skip if cluster is not empty.
+                    if cluster[SPLAT_COUNT]:
+                        continue
+                        
+                    # Use the cluster if it's empty.
+                    target_cluster_index = cluster_index
+                    
+                    # If all clusters have been used, stop looking.
+                    if cluster_index == self.number_of_clusters - 1:
+                        initial_guesses_found = True
+                    
+                    # We've found a cluster if we got here, so stop looking. 
+                    break
 
 
             # Update cluster information.
