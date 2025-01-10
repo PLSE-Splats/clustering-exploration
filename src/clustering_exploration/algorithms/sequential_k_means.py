@@ -43,15 +43,16 @@ class SequentialKMeansAlgorithm(AlgorithmBase):
                     if cluster_index == self.number_of_clusters - 1:
                         initial_guesses_found = True
 
+                    # Use next empty cluster (there should never be a cluster with 0 depth).
+                    if not cluster[DEPTH]:
+                        target_cluster_index = cluster_index
+                        break
+                        
                     # Use the cluster if it's exactly the same.
                     if cluster[DEPTH] == depth:
                         target_cluster_index = cluster_index
                         break
 
-                    # Use next empty cluster.
-                    if not cluster[self.number_of_clusters]:
-                        target_cluster_index = cluster_index
-                        break
 
             # Update cluster information.
             clusters[target_cluster_index, SPLAT_COUNT] += 1
