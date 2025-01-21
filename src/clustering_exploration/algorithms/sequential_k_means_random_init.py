@@ -57,6 +57,8 @@ class SequentialKMeansRandomInitAlgorithm(AlgorithmBase):
             # Get the random splat.
             random_splat = splats[random_splat_index]
 
+            # TODO: ensure empty splat was not chosen.
+
             # Initialize cluster.
             self.cluster_splat(clusters, cluster_index, random_splat)
 
