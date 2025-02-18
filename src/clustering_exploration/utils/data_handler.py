@@ -1,7 +1,7 @@
 from os import makedirs
 from os.path import dirname, exists, join
 
-from numpy import load, ndarray, save
+from numpy import load, ndarray, save, float32
 from polars import Float32, Schema, UInt8, UInt32, all, scan_csv
 
 from clustering_exploration.utils.constants import CACHE_DIR, DATA_DIR, IMAGE_HEIGHT, IMAGE_WIDTH
@@ -74,6 +74,7 @@ def load_splats(data_name: str) -> ndarray:
         )
         .collect()
         .to_numpy()
+        .astype(float32, copy=False)
     )
     splats = raw_splats.reshape((IMAGE_HEIGHT * IMAGE_WIDTH, raw_splats.shape[1] // 5, 5))
 
