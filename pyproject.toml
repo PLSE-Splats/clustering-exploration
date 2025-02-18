@@ -45,33 +45,8 @@ Source = "https://github.com/Kenneth Yang/clustering-exploration"
 path = "src/clustering_exploration/__about__.py"
 
 [tool.hatch.envs.default]
-python = "3.13.1"
-
-[tool.hatch.envs.types]
-extra-dependencies = [
-    "mypy>=1.0.0",
-]
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/clustering_exploration tests}"
-
-[tool.coverage.run]
-source_pkgs = ["clustering_exploration", "tests"]
-branch = true
-parallel = true
-omit = [
-    "src/clustering_exploration/__about__.py",
-]
-
-[tool.coverage.paths]
-clustering_exploration = ["src/clustering_exploration", "*/clustering-exploration/src/clustering_exploration"]
-tests = ["tests", "*/clustering-exploration/tests"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "no cov",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-]
+installer = "uv"
+python = "3.13"
 
 [tool.ruff]
 exclude = ["src/jiexiao", "tests"]
