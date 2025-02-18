@@ -88,6 +88,7 @@ def compute_image_from_clusters(clustered_splats: list, output_image_name: str) 
     composed_image = Parallel(n_jobs=-1)(
         delayed(alpha_compose_splats)(pixel_clusters) for pixel_clusters in tqdm(clustered_splats)
     )
+    
 
     # Save the image.
     return save_array_to_image(np.array(composed_image).reshape(IMAGE_HEIGHT, IMAGE_WIDTH, 3), output_image_name)
